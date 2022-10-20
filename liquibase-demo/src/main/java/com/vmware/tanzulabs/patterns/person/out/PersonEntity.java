@@ -1,5 +1,7 @@
 package com.vmware.tanzulabs.patterns.person.out;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +14,7 @@ class PersonEntity {
 
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO )
+    @Type( type="uuid-char" )
     @Column( name = "person_id", nullable = false, updatable = false, columnDefinition = "VARCHAR(40)" )
     private UUID id;
 
