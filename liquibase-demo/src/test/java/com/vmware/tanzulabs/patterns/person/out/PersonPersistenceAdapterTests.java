@@ -2,6 +2,7 @@ package com.vmware.tanzulabs.patterns.person.out;
 
 import com.vmware.tanzulabs.patterns.person.domain.Address;
 import com.vmware.tanzulabs.patterns.person.domain.Person;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 })
 @Import( PersonPersistenceAdapter.class )
 @DirtiesContext
+@Tag( "UnitTest" )
 class PersonPersistenceAdapterTests {
 
     private static final Logger log = LoggerFactory.getLogger( PersonPersistenceAdapterTests.class );
