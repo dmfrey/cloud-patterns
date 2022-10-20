@@ -4,30 +4,45 @@ import com.vmware.tanzulabs.patterns.person.domain.Address;
 import com.vmware.tanzulabs.patterns.person.domain.Person;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-@DataJpaTest
-@TestPropertySource( properties = {
-        "spring.jpa.hibernate.ddl-auto=create-drop", // default
-        "logging.level.com.vmware.tanzulabs.patterns.person.out=DEBUG"
-})
-@Import( PersonPersistenceAdapter.class )
+@SpringBootTest
 @DirtiesContext
-@Tag( "UnitTest" )
-class PersonPersistenceAdapterTests {
+@Testcontainers
+@Tag( "IntegrationTest" )
+class PersonPersistenceAdapterIntegrationTests {
 
-    private static final Logger log = LoggerFactory.getLogger( PersonPersistenceAdapterTests.class );
+    @Container
+    private static final PostgreSQLContainer POSTGRE_SQL_CONTAINER =
+            new PostgreSQLContainer( DockerImageName.parse( PostgreSQLContainer.IMAGE ).withTag( PostgreSQLContainer.DEFAULT_TAG ) );
+
+    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        public void initialize( ConfigurableApplicationContext configurableApplicationContext ) {
+
+            TestPropertyValues.of(
+                    "spring.datasource.url=" + POSTGRE_SQL_CONTAINER.getJdbcUrl(),
+                    "spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
+                    "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()
+            ).applyTo( configurableApplicationContext.getEnvironment() );
+
+        }
+
+    }
 
     @Autowired
     PersonPersistenceAdapter subject;

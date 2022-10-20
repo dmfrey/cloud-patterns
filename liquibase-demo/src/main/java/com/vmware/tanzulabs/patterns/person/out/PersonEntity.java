@@ -30,7 +30,7 @@ class PersonEntity {
     @Email
     private String email;
 
-    @ManyToOne
+    @ManyToOne( cascade = { CascadeType.ALL } )
     @JoinColumn( name = "address_id" )
     private AddressEntity address;
 
