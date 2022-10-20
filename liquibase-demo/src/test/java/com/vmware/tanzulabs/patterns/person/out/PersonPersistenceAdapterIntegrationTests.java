@@ -38,7 +38,6 @@ class PersonPersistenceAdapterIntegrationTests {
         public void initialize( ConfigurableApplicationContext configurableApplicationContext ) {
 
             TestPropertyValues.of(
-                    "spring.jpa.hibernate.ddl-auto=validate",
                     "spring.datasource.url=" + POSTGRE_SQL_CONTAINER.getJdbcUrl(),
                     "spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
                     "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()

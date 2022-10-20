@@ -6,7 +6,7 @@ databaseChangeLog:
         changes:
 
         - sqlFile:
-            dbms: 'h2, postgres'
+            dbms: 'h2, postgresql'
             splitStatements: true
             path: changeset_01/schema.sql
             relativeToChangelogFile: true
