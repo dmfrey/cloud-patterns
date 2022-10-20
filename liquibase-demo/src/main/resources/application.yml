@@ -16,6 +16,10 @@ spring:
   h2:
     console.enabled: true
 
+  sql:
+    init:
+      mode: always
+
 management:
   endpoints:
     web.exposure.include: '*'
