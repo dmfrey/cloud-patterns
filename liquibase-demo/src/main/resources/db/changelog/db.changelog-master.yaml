@@ -1,0 +1,13 @@
+databaseChangeLog:
+
+    - changeSet:
+        id:  sqlFile-demo
+        author:  liquibase-demo
+        changes:
+
+        - sqlFile:
+            dbms: 'h2, postgres'
+            splitStatements: true
+            path: changeset_01/schema.sql
+            relativeToChangelogFile: true
+            stripComments: true
