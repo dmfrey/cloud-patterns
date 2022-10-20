@@ -10,6 +10,7 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -35,6 +36,7 @@ class PersonPersistenceAdapterIntegrationTests {
         public void initialize( ConfigurableApplicationContext configurableApplicationContext ) {
 
             TestPropertyValues.of(
+                    "spring.jpa.hibernate.ddl-auto=validate",
                     "spring.datasource.url=" + POSTGRE_SQL_CONTAINER.getJdbcUrl(),
                     "spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
                     "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()
@@ -47,13 +49,12 @@ class PersonPersistenceAdapterIntegrationTests {
     @Autowired
     PersonPersistenceAdapter subject;
 
-    @Autowired
-    PersonRepository repository;
-
+    UUID personId = UUID.fromString( "87985a0c-f39c-40a9-9f66-136a0f36570f" );
     String firstName = "Marty";
     String lastName = "McFly";
     String email = "";
 
+    UUID addressId = UUID.fromString( "a979cdd3-19e2-4043-8ee6-2fc27f9584ab" );
     String address1 = "9303 Lyon Drive";
     String address2 = "Lyon Estates";
     String city = "Hill Valley";
@@ -61,26 +62,12 @@ class PersonPersistenceAdapterIntegrationTests {
     String postalCode = "95420";
 
     @Test
+    @Sql( "createPerson.sql" )
     void findById() {
 
-        var fakeAddress = new AddressEntity();
-        fakeAddress.setAddress1( address1 );
-        fakeAddress.setAddress2( address2 );
-        fakeAddress.setCity( city );
-        fakeAddress.setState( state );
-        fakeAddress.setPostalCode( postalCode );
+        var actual = this.subject.findById( personId );
 
-        var fakePerson = new PersonEntity();
-        fakePerson.setFirstName( firstName );
-        fakePerson.setLastName( lastName );
-        fakePerson.setEmail( email );
-        fakePerson.setAddress( fakeAddress );
-
-        var created = this.repository.save( fakePerson );
-
-        var actual = this.subject.findById( created.getId() );
-
-        var expected = new Person( created.getId(), firstName, lastName, email, new Address( created.getAddress().getId(), address1, address2, city, state, postalCode ) );
+        var expected = new Person( personId, firstName, lastName, email, new Address( addressId, address1, address2, city, state, postalCode ) );
 
         assertThat( actual ).isEqualTo( expected );
 

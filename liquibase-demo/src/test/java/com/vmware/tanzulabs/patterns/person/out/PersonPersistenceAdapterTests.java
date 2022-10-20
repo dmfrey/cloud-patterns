@@ -33,9 +33,6 @@ class PersonPersistenceAdapterTests {
     @Autowired
     PersonPersistenceAdapter subject;
 
-    @Autowired
-    PersonRepository repository;
-
     UUID personId = UUID.fromString( "87985a0c-f39c-40a9-9f66-136a0f36570f" );
     String firstName = "Marty";
     String lastName = "McFly";
