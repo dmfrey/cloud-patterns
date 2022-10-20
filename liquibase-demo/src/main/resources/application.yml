@@ -1,0 +1,22 @@
+logging.level:
+  org.springframework.data.jpa: DEBUG
+  org.springframework.test.context.jdbc: DEBUG
+  com.vmware.tanzulabs.patterns.person: DEBUG
+
+spring:
+
+  application:
+    name: liquibase-demo
+
+  jpa:
+    show-sql: true
+
+  h2:
+    console.enabled: true
+
+management:
+  endpoints:
+    web.exposure.include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
