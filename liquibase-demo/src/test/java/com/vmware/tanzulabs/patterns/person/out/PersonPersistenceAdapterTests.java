@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @DataJpaTest
 @TestPropertySource( properties = {
-        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.hibernate.ddl-auto=validate",
         "logging.level.com.vmware.tanzulabs.patterns.person.out=DEBUG"
 })
 @Import( PersonPersistenceAdapter.class )
