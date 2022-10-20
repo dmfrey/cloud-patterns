@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @DataJpaTest
 @TestPropertySource( properties = {
-        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.hibernate.ddl-auto=create-drop", // default
         "logging.level.com.vmware.tanzulabs.patterns.person.out=DEBUG"
 })
 @Import( PersonPersistenceAdapter.class )

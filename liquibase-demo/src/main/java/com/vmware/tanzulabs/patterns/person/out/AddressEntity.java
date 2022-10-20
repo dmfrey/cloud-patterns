@@ -1,5 +1,7 @@
 package com.vmware.tanzulabs.patterns.person.out;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -12,6 +14,7 @@ class AddressEntity {
 
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO )
+    @Type( type="uuid-char" )
     @Column( name = "address_id", nullable = false, updatable = false, columnDefinition = "VARCHAR(40)" )
     private UUID id;
 
