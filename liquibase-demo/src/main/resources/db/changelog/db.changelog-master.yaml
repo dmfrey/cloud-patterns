@@ -11,3 +11,15 @@ databaseChangeLog:
             path: changeset_01/schema.sql
             relativeToChangelogFile: true
             stripComments: true
+
+    - changeSet:
+          id:  sqlFile-changeset-02
+          author:  liquibase-demo
+          changes:
+
+          - sqlFile:
+              dbms: 'h2, postgresql'
+              splitStatements: true
+              path: changeset_02/schema.sql
+              relativeToChangelogFile: true
+              stripComments: true

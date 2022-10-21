@@ -17,6 +17,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +56,7 @@ class PersonPersistenceAdapterIntegrationTests {
     String firstName = "Marty";
     String lastName = "McFly";
     String email = "";
+    LocalDate birthDate = LocalDate.parse( "1968-06-12", DateTimeFormatter.ISO_DATE );
 
     UUID addressId = UUID.fromString( "a979cdd3-19e2-4043-8ee6-2fc27f9584ab" );
     String address1 = "9303 Lyon Drive";
@@ -68,7 +71,7 @@ class PersonPersistenceAdapterIntegrationTests {
 
         var actual = this.subject.findById( personId );
 
-        var expected = new Person( personId, firstName, lastName, email, new Address( addressId, address1, address2, city, state, postalCode ) );
+        var expected = new Person( personId, firstName, lastName, email, birthDate, new Address( addressId, address1, address2, city, state, postalCode ) );
 
         assertThat( actual ).isEqualTo( expected );
 
@@ -86,10 +89,10 @@ class PersonPersistenceAdapterIntegrationTests {
     @Test
     void createPerson() {
 
-        var fakePerson = new Person( null, firstName, lastName, email, new Address( null, address1, address2, city, state, postalCode ) );
+        var fakePerson = new Person( null, firstName, lastName, email, birthDate, new Address( null, address1, address2, city, state, postalCode ) );
         var actual = this.subject.createPerson( fakePerson );
 
-        var expected = new Person( actual.id(), firstName, lastName, email, new Address( actual.address().id(), address1, address2, city, state, postalCode ) );
+        var expected = new Person( actual.id(), firstName, lastName, email, birthDate, new Address( actual.address().id(), address1, address2, city, state, postalCode ) );
 
         assertThat( actual ).isEqualTo( expected );
 

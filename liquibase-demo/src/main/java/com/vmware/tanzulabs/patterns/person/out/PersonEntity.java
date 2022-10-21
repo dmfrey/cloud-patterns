@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,6 +30,9 @@ class PersonEntity {
     @Column( name = "email_address", nullable = false )
     @Email
     private String email;
+
+    @Column( name = "birth_date" )
+    private LocalDate birthDate;
 
     @ManyToOne( cascade = { CascadeType.ALL } )
     @JoinColumn( name = "address_id" )
@@ -78,6 +82,17 @@ class PersonEntity {
 
     }
 
+    public LocalDate getBirthDate() {
+
+        return birthDate;
+    }
+
+    public void setBirthDate( LocalDate birthDate ) {
+
+        this.birthDate = birthDate;
+
+    }
+
     public AddressEntity getAddress() {
 
         return address;
@@ -114,6 +129,7 @@ class PersonEntity {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", birthDate='" + birthDate + '\'' +
                 ", address=" + address +
                 '}';
     }

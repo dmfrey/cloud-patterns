@@ -39,6 +39,7 @@ class PersonPersistenceAdapter {
         entity.setFirstName( person.firstName() );
         entity.setLastName( person.lastName() );
         entity.setEmail( person.email() );
+        entity.setBirthDate( person.birthDate() );
 
         if( null != person.address() ) {
 
@@ -52,7 +53,7 @@ class PersonPersistenceAdapter {
 
     private Person mapPersonEntity( final PersonEntity personEntity ) {
 
-        return new Person( personEntity.getId(), personEntity.getFirstName(), personEntity.getLastName(), personEntity.getEmail(), mapAddressEntity( personEntity.getAddress() ) );
+        return new Person( personEntity.getId(), personEntity.getFirstName(), personEntity.getLastName(), personEntity.getEmail(), personEntity.getBirthDate(), mapAddressEntity( personEntity.getAddress() ) );
     }
 
     private Address mapAddressEntity( final AddressEntity addressEntity ) {
