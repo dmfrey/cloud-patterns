@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -30,18 +29,12 @@ class PersonPersistenceAdapterIntegrationTests {
     private static final PostgreSQLContainer POSTGRE_SQL_CONTAINER =
             new PostgreSQLContainer( DockerImageName.parse( PostgreSQLContainer.IMAGE ).withTag( PostgreSQLContainer.DEFAULT_TAG ) );
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        public void initialize( ConfigurableApplicationContext configurableApplicationContext ) {
-
-            TestPropertyValues.of(
-                    "spring.datasource.url=" + POSTGRE_SQL_CONTAINER.getJdbcUrl(),
-                    "spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
-                    "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()
-            ).applyTo( configurableApplicationContext.getEnvironment() );
-
-        }
-
+    @DynamicPropertySource
+    static void registerConfigurationProperties( DynamicPropertyRegistry registry ) {
+        registry.add( "spring.datasource.url", () -> POSTGRE_SQL_CONTAINER.getJdbcUrl() );
+        registry.add( "spring.datasource.username", () -> POSTGRE_SQL_CONTAINER.getUsername() );
+        registry.add( "spring.datasource.password", () -> POSTGRE_SQL_CONTAINER.getPassword() );
+        registry.add( "spring.jpa.generate-ddl", () -> true );
     }
 
     @Autowired
