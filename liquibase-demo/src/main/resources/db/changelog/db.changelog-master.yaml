@@ -11,3 +11,11 @@ databaseChangeLog:
             path: changeset_01/schema.sql
             relativeToChangelogFile: true
             stripComments: true
+
+        rollback:
+        - sqlFile:
+            dbms: 'h2, postgresql'
+            splitStatements: true
+            path: changeset_01/rollback.sql
+            relativeToChangelogFile: true
+            stripComments: true
