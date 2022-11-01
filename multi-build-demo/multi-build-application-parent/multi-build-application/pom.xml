@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.vmware.tanzulabs</groupId>
+		<artifactId>multi-build-application-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>multi-build-application</artifactId>
+	<name>Multi-build Application</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.vmware.tanzulabs</groupId>
+			<artifactId>multi-build-domain</artifactId>
+		</dependency>
+
+		<!-- Spring Boot dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<dependency>
+				<groupId>com.vmware.tanzulabs</groupId>
+				<artifactId>multi-build-dependencies</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<id>repackage</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<profiles>
+
+		<profile>
+
+			<id>postgres</id>
+
+			<dependencies>
+
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+
+			</dependencies>
+
+		</profile>
+
+		<profile>
+
+			<id>mysql</id>
+
+			<dependencies>
+
+				<dependency>
+					<groupId>com.mysql</groupId>
+					<artifactId>mysql-connector-j</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+
+			</dependencies>
+
+		</profile>
+
+		<profile>
+
+			<id>rabbit</id>
+
+			<dependencies>
+
+				<!-- Spring Cloud dependencies -->
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+				</dependency>
+
+			</dependencies>
+
+			<build>
+
+				<finalName>${project.artifactId}-rabbit-${project.version}</finalName>
+
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>kafka</id>
+
+			<dependencies>
+
+				<!-- Spring Cloud dependencies -->
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+				</dependency>
+
+			</dependencies>
+
+			<build>
+
+				<finalName>${project.artifactId}-kafka-${project.version}</finalName>
+
+			</build>
+
+		</profile>
+
+	</profiles>
+
+</project>

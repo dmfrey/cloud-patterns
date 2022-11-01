@@ -1,0 +1,26 @@
+
+logging.level:
+  org.springframework.cloud.stream: DEBUG
+  org.springframework.data: DEBUG
+
+spring:
+
+  jpa:
+    generate-ddl: true
+
+  cloud:
+
+    function:
+      definition: loadPersonsConsumer
+
+    stream:
+
+      function:
+        bindings:
+          - loadPersonsConsumer-in-0=input
+
+      bindings:
+        loadPersonsConsumer-in-0:
+          destination: test-load-persons
+          group: ${spring.application.name}
+
