@@ -25,9 +25,18 @@ databaseChangeLog:
           author:  liquibase-demo
           changes:
 
-              - sqlFile:
-                    dbms: 'h2, postgresql'
-                    splitStatements: true
-                    path: changeset_02/schema.sql
-                    relativeToChangelogFile: true
-                    stripComments: true
+          - sqlFile:
+              dbms: 'h2, postgresql'
+              splitStatements: true
+              path: changeset_02/schema.sql
+              relativeToChangelogFile: true
+              stripComments: true
+
+          rollback:
+          - sqlFile:
+              dbms: 'h2, postgresql'
+              splitStatements: true
+              path: changeset_02/rollback.sql
+              relativeToChangelogFile: true
+              stripComments: true
+
