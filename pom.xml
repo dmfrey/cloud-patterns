@@ -24,6 +24,7 @@
 
 	<modules>
 		<module>liquibase-demo</module>
+		<module>message-demo</module>
 	</modules>
 
 	<dependencies>
