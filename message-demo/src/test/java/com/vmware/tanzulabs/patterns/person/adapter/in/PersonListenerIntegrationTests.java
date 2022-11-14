@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vmware.tanzulabs.patterns.person.adapter.out.PersonEventMessage;
 import com.vmware.tanzulabs.patterns.person.adapter.out.PersonEventType;
 import com.vmware.tanzulabs.patterns.util.UuidGenerator;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -20,12 +22,16 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,17 +43,21 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.waitAtMost;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(
-        partitions = 1,
-        brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" }
-)
-@Tag( "UnitTest" )
-class PersonListenerTests {
+@Testcontainers
+@Tag( "IntegrationTest" )
+class PersonListenerIntegrationTests {
 
-    private static final Logger log = LoggerFactory.getLogger( PersonListenerTests.class );
+    private static final Logger log = LoggerFactory.getLogger( PersonListenerIntegrationTests.class );
 
-    @Autowired
-    private EmbeddedKafkaBroker embeddedKafka;
+    @Container
+    private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer( DockerImageName.parse( "confluentinc/cp-kafka" ) );
+
+    @DynamicPropertySource
+    static void kafkaProperties( DynamicPropertyRegistry registry ) {
+
+        registry.add( "spring.kafka.bootstrap-servers", KAFKA_CONTAINER::getBootstrapServers );
+
+    }
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -90,13 +100,19 @@ class PersonListenerTests {
 
         var containerProperties = new ContainerProperties( personEventTopic );
 
-        var consumerProperties =
-                KafkaTestUtils.consumerProps( groupId, "false", embeddedKafka );
+        Map<String, Object> consumerProperties = Map.of(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_CONTAINER.getBootstrapServers(),
+                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
+                ConsumerConfig.GROUP_ID_CONFIG, "test",
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class
+
+        );
 
         var consumerFactory = new DefaultKafkaConsumerFactory<String, PersonEventMessage>( consumerProperties );
 
         container = new KafkaMessageListenerContainer<>( consumerFactory, containerProperties );
-        container.setupMessageListener(( MessageListener<String, String>) record -> {
+        container.setupMessageListener( (MessageListener<String, String>) record -> {
 
             log.debug( "Listened message='{}'", record );
             consumerRecords.add( record );
