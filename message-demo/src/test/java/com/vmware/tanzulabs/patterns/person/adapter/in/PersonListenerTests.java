@@ -23,7 +23,6 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -41,7 +40,6 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.waitAtMost;
         partitions = 1,
         brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" }
 )
-@ActiveProfiles( "test" )
 class PersonListenerTests {
 
     private static final Logger log = LoggerFactory.getLogger( PersonListenerTests.class );
