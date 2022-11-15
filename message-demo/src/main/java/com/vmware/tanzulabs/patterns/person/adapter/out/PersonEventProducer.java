@@ -1,30 +1,30 @@
 package com.vmware.tanzulabs.patterns.person.adapter.out;
 
 import com.vmware.tanzulabs.patterns.person.domain.Person;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PersonEventProducer {
 
-    private final KafkaTemplate<String, PersonEventMessage> personEventMessageKafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger( PersonEventProducer.class );
 
-    private final String topic;
+    private final StreamBridge streamBridge;
 
-    PersonEventProducer(
-            final KafkaTemplate<String, PersonEventMessage> personEventMessageKafkaTemplate,
-            @Value( "${topics.person-events}" ) final String topic
-    ) {
+    PersonEventProducer( final StreamBridge streamBridge ) {
 
-        this.personEventMessageKafkaTemplate = personEventMessageKafkaTemplate;
-        this.topic = topic;
+        this.streamBridge = streamBridge;
 
     }
 
     public void sendPersonEvent( Person person, PersonEventType type, String message ) {
 
-        this.personEventMessageKafkaTemplate.send( topic, new PersonEventMessage( person.id(), type, message ) );
+        var personEventMessage = new PersonEventMessage( person.id(), type, message );
+        log.info( "PersonEventMessage: {}", personEventMessage );
+
+        this.streamBridge.send( "person-events-out-0", personEventMessage );
 
     }
 

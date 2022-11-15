@@ -1,0 +1,28 @@
+
+logging.level:
+  org.apache.kafka: WARN
+  org.apache.zookeeper: WARN
+  org.springframework.amqp: DEBUG
+  org.springframework.cloud.stream: DEBUG
+  com.vmware.tanzulabs.patterns: DEBUG
+  kafka: WARN
+  state: WARN
+
+spring:
+
+  application:
+    name: message-demo
+
+  cloud:
+
+    function:
+      definition: person
+
+    stream:
+      bindings:
+        person-in-0:
+          destination: person-topic
+          group: ${spring.application.name}
+
+        person-events-out-0:
+          destination: person-events-topic
